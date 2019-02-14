@@ -1,6 +1,8 @@
 package com.rritet.webservices.service;
 
 import com.rritet.webservices.model.Student;
+import com.rritet.webservices.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,41 +11,39 @@ import java.util.List;
 @Service
 public class StudentRepoService {
 
-    //StudentRepository studentRepository;
-    List <Student> studentList = new ArrayList<Student>();
+    @Autowired
+    private StudentRepository studentRepository;
 
     public List<Student> getAllStudents(){
+        List <Student> studentList = new ArrayList<Student>();
+        for (Student student:studentRepository.findAll()) studentList.add(student);
         return studentList;
     }
 
     public void addStudent(Student student){
-        studentList.add(student);
+        studentRepository.save(student);
     }
 
     public Student getStudent(int id){
-        for (Student elem:studentList) {
-            if(elem.getRollNo()==id)
-                return elem;
-
-        }
-        return null;
+        return studentRepository.findById(id).get();
     }
 
     public String deleteStudent(int id){
-        for (Student elem:studentList) {
-            if(elem.getRollNo()==id) {
-                studentList.remove(elem);
-                return "Student " + elem.getFirstName() + " " + elem.getLastName() + " is revmoved";
-            }
+        Student student = getStudent(id);
+        if(student!=null){
+            studentRepository.deleteById(id);
+            return "Student with id " +id+" and Name="+student.getFirstName()+" "+student.getLastName()+" is deleted";
         }
-        return "No such student found";
+        return "No such Student with id="+id;
     }
 
     public String updateStudentFirstName(int id, String  firstName){
-        for (Student elem:studentList) {
+
+        for (Student elem:studentRepository.findAll()) {
             if(elem.getRollNo()==id) {
-                studentList.get(studentList.indexOf(elem)).setFirstName(firstName);
-                return "Student " + elem.getRollNo() + " is update";
+                elem.setFirstName(firstName);
+                studentRepository.save(elem);
+                return "Student " + elem.getRollNo() + " is updated";
             }
         }
         return "No such student found";

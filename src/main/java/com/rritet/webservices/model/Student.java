@@ -3,8 +3,14 @@ package com.rritet.webservices.model;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Student {
 
+    @Id
     private int rollNo;
     private String firstName;
     private String lastName;
